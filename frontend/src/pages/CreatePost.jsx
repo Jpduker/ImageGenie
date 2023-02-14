@@ -15,6 +15,7 @@ const CreatePost = () => {
   const [loading, setLoading] = useState(false);
 
   const generateImage =() => {
+    
 
   }
 
