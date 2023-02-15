@@ -3,8 +3,8 @@ import * as dotenv from "dotenv";
 import cors from "cors";
 import connectDB from "./mongobd/connect.js";
 
-import postRoutes from './routes/postRoutes.js'
-import dalleRoutes from './routes/dalleRoutes.js'
+import postRoutes from './routes/postRoutes.js';
+import dalleRoutes from './routes/dalleRoutes.js';
 
 dotenv.config();
 
