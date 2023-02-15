@@ -1,38 +1,33 @@
-
-
 import express from 'express';
 import * as dotenv from 'dotenv';
-import { Configuration, OpenAIApi } from 'openai';
+import cors from 'cors';
+
+import connectDB from './mongodb/connect.js';
+import postRoutes from './routes/postRoutes.js';
+import dalleRoutes from './routes/dalleRoutes.js';
 
 dotenv.config();
 
-const router = express.Router();
+const app = express();
+app.use(cors());
+app.use(express.json({ limit: '50mb' }));
 
-const configuration = new Configuration({
-  apiKey: process.env.OPENAI_API_KEY,
+app.use('/api/v1/post', postRoutes);
+app.use('/api/v1/dalle', dalleRoutes);
+
+app.get('/', async (req, res) => {
+  res.status(200).json({
+    message: 'Hello from DALL.E!',
+  });
 });
 
-const openai = new OpenAIApi(configuration);
-
-router.route('/').get((req, res) => {
-  res.status(200).json({ message: 'Hello from DALL-E!' });
-});
-
-router.route('/').post(async (req, res) => {
+const startServer = async () => {
   try {
-    const { prompt } = req.body;
-
-    const aiResponse = await openai.createImage({
-      prompt,
-      n: 1,
-      size: '1024x1024',
-      response_format: 'b64_json',
-    });
-
-    const image = aiResponse.data.data[0].b64_json;
-    res.status(200).json({ photo: image });
+    connectDB(process.env.MONGODB_URL);
+    app.listen(8080, () => console.log('Server started on port 8080'));
   } catch (error) {
-    console.error(error);
-    res.status(500).send(error?.response.data.error.message || 'Something went wrong');
+    console.log(error);
   }
-});
+};
+
+startServer();
